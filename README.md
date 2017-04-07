@@ -51,9 +51,9 @@ Returns the return value of the callback.
 Example:
 ```php
 $db->transaction(function($db){
-	$r1 = $db("INSERT INTO t1 SET ?", ["a" => "bc"]);
+    $r1 = $db("INSERT INTO t1 SET ?", ["a" => "bc"]);
 
-	$r2 = $db("SELECT a FROM t1 WHERE id = ?", $r1->lastId);
+    $r2 = $db("SELECT a FROM t1 WHERE id = ?", $r1->lastId);
 
     echo $r2->first->a; // "bc"
 
@@ -67,7 +67,7 @@ $db("SELECT a FROM t1 WHERE a = ?", "bc")->first; // NULL
 
 ### EPDOResult
 
-$results is an iterable just like any ordinary array, but has a few extra properties...
+EPDOResult ($results) is an iterable just like any ordinary array, but has a few extra properties...
 
 #### $results->first
 
