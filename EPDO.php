@@ -78,7 +78,7 @@ class EPDO extends PDO {
             }
 
             // if $param is a scalar, "?" remains "?"
-            if (is_scalar($param)) {
+            if (is_scalar($param) || is_null($param)) {
                 $anchors[] = "?";
                 $newParams[] = $param;
                 continue;
@@ -102,7 +102,7 @@ class EPDO extends PDO {
             if (is_array($param)) {
                 $a = [];
                 foreach ($param as $k => $v) {
-                    if (!is_scalar($v)) {
+                    if (!is_scalar($v) && !is_null($v)) {
                         throw new Exception("Recursive substitutions of non-scalars are not supported");
                     }
                     $a[] = "`${k}` = ?";
@@ -138,6 +138,16 @@ class EPDOResult implements Iterator, ArrayAccess {
             case 'all': return $this->_rows;
             case 'affectedRows': return $this->_affectedRows;
             case 'lastId': return $this->_lastId;
+            case 'count': return count($this->_rows);
+            case 'value':
+                $f = $this->first;
+                if (isset($f)) {
+                    $vals = array_values((array)$f);
+                    if (count($vals)) {
+                        return $vals[0];
+                    }
+                }
+                return null;
         }
 
         return null;
