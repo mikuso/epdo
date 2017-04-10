@@ -88,6 +88,14 @@ Works similarly to `$db->lastInsertId()` except that `$result->lastId` won't eve
 
 Get the number of rows affected by the last `INSERT`/`UPDATE` - or the number of rows returned in the result set.
 
+#### $results->count
+
+Get the number of rows returned in the result set.
+
+#### $results->value
+
+Get the value of the first column of the first row of results.
+
 #### echo $results
 
 Reveals some useful debug information about the result object.
