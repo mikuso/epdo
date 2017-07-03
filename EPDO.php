@@ -129,7 +129,7 @@ class EPDOResult implements Iterator, ArrayAccess {
         $this->_curIdx = 0;
         $this->_affectedRows = $stmt->rowCount();
         $this->_lastId = $pdo->lastInsertId();
-        $this->_rows = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $this->_rows = null;
     }
 
     public function __get($key) {
@@ -138,7 +138,7 @@ class EPDOResult implements Iterator, ArrayAccess {
             case 'all': return $this->_rows;
             case 'affectedRows': return $this->_affectedRows;
             case 'lastId': return $this->_lastId;
-            case 'count': return count($this->_rows);
+            case 'count': $this->_fetchResults(); return count($this->_rows);
             case 'value':
                 $f = $this->first;
                 if (isset($f)) {
@@ -155,40 +155,55 @@ class EPDOResult implements Iterator, ArrayAccess {
 
     // what should be returned from print_r() and var_dump() etc...
     public function __debugInfo() {
+        $this->_fetchResults();
         return $this->_rows;
     }
 
     // what should be output when echoing the result object itself
     public function __toString() {
-        $rowCount = count($this->_rows);
+        $rowCount = isset($this->_rows) ? count($this->_rows) : '???';
         $query = $this->indent($this->_sql, true);
         $firstResult = $this->indent(var_export($this->first, true));
         return "\nEPDOResult:\n----------------\nResults        : {$rowCount}\nAffected Rows  : {$this->_affectedRows}\nLast Insert Id : {$this->_lastId}\nQuery          ->\n{$query}
 \nFirst Result   ->\n{$firstResult}\n";
     }
 
+    // lazy load results
+    private function _fetchResults() {
+        if (!isset($this->_rows)) {
+            $this->_rows = $this->_stmt->fetchAll(PDO::FETCH_OBJ);
+        }
+    }
+
     // methods for Iterator
     public function current() {
+        $this->_fetchResults();
         return $this->_rows[$this->_curIdx];
     }
     public function key() {
+        $this->_fetchResults();
         return $this->_curIdx;
     }
     public function next() {
+        $this->_fetchResults();
         $this->_curIdx++;
     }
     public function rewind() {
+        $this->_fetchResults();
         $this->_curIdx = 0;
     }
     public function valid() {
+        $this->_fetchResults();
         return isset($this->_rows[$this->_curIdx]);
     }
 
     // methods for ArrayAccess
     public function offsetExists($idx) {
+        $this->_fetchResults();
         return isset($this->_rows[$idx]);
     }
     public function offsetGet($idx) {
+        $this->_fetchResults();
         return $this->_rows[$idx];
     }
     public function offsetSet($idx, $value) {
