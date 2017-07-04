@@ -134,8 +134,8 @@ class EPDOResult implements Iterator, ArrayAccess {
 
     public function __get($key) {
         switch ($key) {
-            case 'first': return isset($this->_rows[0]) ? $this->_rows[0] : null;
-            case 'all': return $this->_rows;
+            case 'first': $this->_fetchResults(); return isset($this->_rows[0]) ? $this->_rows[0] : null;
+            case 'all': $this->_fetchResults(); return $this->_rows;
             case 'affectedRows': return $this->_affectedRows;
             case 'lastId': return $this->_lastId;
             case 'count': $this->_fetchResults(); return count($this->_rows);
