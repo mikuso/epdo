@@ -168,7 +168,6 @@ $db("
 
 To perform a batch `INSERT`, you can nest multiple arrays:
 ```php
-// select rows where `t1.id` is either 1,2 or 3
 $db("
     INSERT INTO t1 (a, b) VALUES ?
 ", [
@@ -185,7 +184,6 @@ $db("
 
 To perform an `INSERT INTO ... SET`, you can pass objects or associative arrays:
 ```php
-// select rows where `t1.id` is either 1,2 or 3
 $db("
     INSERT INTO t1 SET ?
 ", [
